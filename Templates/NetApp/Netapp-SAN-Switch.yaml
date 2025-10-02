@@ -1,0 +1,120 @@
+zabbix_export:
+  version: '7.0'
+  date: '2025-10-02T00:00:00Z'
+  groups:
+    - name: "Templates/Storage"
+  templates:
+    - name: "Template SNMP NetApp E2800A-8GB"
+      description: "SNMP monitoring template for NetApp E2800A-8GB SAN switch"
+      groups:
+        - name: "Templates/Storage"
+      items:
+        - name: "System Description"
+          type: SNMP_AGENT
+          snmp_oid: "get[1.3.6.1.2.1.1.1.0]"
+          key: "snmp.sysDescr"
+          value_type: TEXT
+          delay: "1h"
+
+        - name: "System Object ID"
+          type: SNMP_AGENT
+          snmp_oid: "get[1.3.6.1.2.1.1.2.0]"
+          key: "snmp.sysObjectID"
+          value_type: TEXT
+          delay: "1h"
+
+        - name: "System Uptime"
+          type: SNMP_AGENT
+          snmp_oid: "get[1.3.6.1.2.1.1.3.0]"
+          key: "snmp.sysUpTimeInstance"
+          units: "s"
+          delay: "1m"
+          preprocessing:
+            - type: MULTIPLIER
+              parameters:
+                - "0.01"   # Timeticks → seconds
+
+        - name: "System Contact"
+          type: SNMP_AGENT
+          snmp_oid: "get[1.3.6.1.2.1.1.4.0]"
+          key: "snmp.sysContact"
+          value_type: TEXT
+          delay: "1h"
+
+        - name: "System Name"
+          type: SNMP_AGENT
+          snmp_oid: "get[1.3.6.1.2.1.1.5.0]"
+          key: "snmp.sysName"
+          value_type: TEXT
+          delay: "1h"
+
+        - name: "System Location"
+          type: SNMP_AGENT
+          snmp_oid: "get[1.3.6.1.2.1.1.6.0]"
+          key: "snmp.sysLocation"
+          value_type: TEXT
+          delay: "1h"
+
+        - name: "System Services"
+          type: SNMP_AGENT
+          snmp_oid: "get[1.3.6.1.2.1.1.7.0]"
+          key: "snmp.sysServices"
+          value_type: UNSIGNED
+          delay: "1h"
+
+        # NetApp E2800A Enterprise OIDs
+        - name: "Device Model"
+          type: SNMP_AGENT
+          snmp_oid: "get[1.3.6.1.4.1.789.1123.2.500.1.1.0]"
+          key: "snmp.deviceModel"
+          value_type: TEXT
+          delay: "1h"
+
+        - name: "Device Serial Number"
+          type: SNMP_AGENT
+          snmp_oid: "get[1.3.6.1.4.1.789.1123.2.500.1.2.0]"
+          key: "snmp.serialNumber"
+          value_type: TEXT
+          delay: "1h"
+
+        - name: "Hardware ID"
+          type: SNMP_AGENT
+          snmp_oid: "get[1.3.6.1.4.1.789.1123.2.500.1.3.0]"
+          key: "snmp.hardwareID"
+          value_type: TEXT
+          delay: "1h"
+
+        - name: "Vendor"
+          type: SNMP_AGENT
+          snmp_oid: "get[1.3.6.1.4.1.789.1123.2.500.1.4.0]"
+          key: "snmp.vendor"
+          value_type: TEXT
+          delay: "1h"
+
+        - name: "Internal Name"
+          type: SNMP_AGENT
+          snmp_oid: "get[1.3.6.1.4.1.789.1123.2.500.1.5.0]"
+          key: "snmp.internalName"
+          value_type: TEXT
+          delay: "1h"
+
+        - name: "Firmware Version"
+          type: SNMP_AGENT
+          snmp_oid: "get[1.3.6.1.4.1.789.1123.2.500.1.6.0]"
+          key: "snmp.firmwareVersion"
+          value_type: TEXT
+          delay: "1h"
+
+        - name: "Device Status"
+          type: SNMP_AGENT
+          snmp_oid: "get[1.3.6.1.4.1.789.1123.2.500.1.7.0]"
+          key: "snmp.deviceStatus"
+          value_type: UNSIGNED
+          delay: "1h"
+
+      triggers:
+        - name: "NetApp E2800A Uptime < 10 minutes"
+          expression: "last(/Template SNMP NetApp E2800A-8GB/snmp.sysUpTimeInstance)<600"
+          severity: HIGH
+          description: "Device has been restarted within the last 10 minutes."
+
